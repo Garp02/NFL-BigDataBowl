@@ -7,6 +7,19 @@ export async function getJson<T>(ruta: string): Promise<T> {
   return r.json() as Promise<T>
 }
 
+export async function postJson<T>(ruta: string, cuerpo: unknown): Promise<T> {
+  const r = await fetch(`api/${ruta}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(cuerpo),
+  })
+  if (!r.ok) {
+    const detalle = await r.json().then((j: { detail?: unknown }) => j.detail).catch(() => null)
+    throw new Error(typeof detalle === 'string' ? detalle : `Error ${r.status}`)
+  }
+  return r.json() as Promise<T>
+}
+
 export function useApi<T>(ruta: string | null) {
   const [datos, setDatos] = useState<T | null>(null)
   const [error, setError] = useState<string | null>(null)

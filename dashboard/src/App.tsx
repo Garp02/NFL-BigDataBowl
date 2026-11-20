@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApi } from './api'
 import { Estado } from './components/ui'
+import Asistente from './views/Asistente'
 import Lineas from './views/Lineas'
 import ReporteEquipo from './views/ReporteEquipo'
 
@@ -8,6 +9,7 @@ const VISTAS = [
   { id: 'ofensiva', nombre: 'Ataque del rival' },
   { id: 'defensa', nombre: 'Defensa del rival' },
   { id: 'lineas', nombre: 'Líneas (OL / pass rush)' },
+  { id: 'asistente', nombre: 'Asistente IA' },
 ] as const
 
 type Vista = (typeof VISTAS)[number]['id']
@@ -49,7 +51,9 @@ export default function App() {
       </nav>
 
       <Estado cargando={cargando} error={error} />
-      {vista === 'lineas' ? <Lineas equipo={equipo} /> : <ReporteEquipo equipo={equipo} lado={vista} />}
+      {vista === 'lineas' && <Lineas equipo={equipo} />}
+      {vista === 'asistente' && <Asistente equipo={equipo} />}
+      {(vista === 'ofensiva' || vista === 'defensa') && <ReporteEquipo equipo={equipo} lado={vista} />}
     </main>
   )
 }
