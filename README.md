@@ -69,27 +69,6 @@ dashboard/src/
   views/         ReporteEquipo, Lineas, Pizarra, Asistente
 ```
 
-## Cómo correrlo
-
-Requiere el entorno del hackathon (`sh .hackathon/setup.sh --check` debe dar TODO OK).
-
-```
-# Backend
-.venv/bin/uvicorn backend.main:app --reload
-
-# Dashboard en desarrollo (otra terminal), abre http://localhost:5173
-cd dashboard && npm run dev
-```
-
-Si `dashboard/dist` existe cuando arranca el backend (después de `npm run build`), el backend también sirve el dashboard compilado en http://localhost:8000.
-
-El asistente es opcional. Para usarlo en local, crea un `.env` en la raíz con `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` y `AWS_REGION=us-east-1`, con las llaves temporales del workshop. `.env` no se versiona.
-
-**Stack:** Python 3.12, FastAPI, pandas, React 18, Vite, TypeScript, Tailwind 3, Recharts, Strands Agents y Amazon Bedrock (Nova).
-
-## Declaración
-
-Declaramos que este trabajo se hizo durante el hackathon NFL Big Data Bowl UNAM 2026 (20 de noviembre, CU) y solo por los integrantes del equipo, con apoyo de Kiro como asistente de programación.
 
 - Carlos Fabián Esteva Gallegos.
 - Ibrahim Munive Ramírez.
