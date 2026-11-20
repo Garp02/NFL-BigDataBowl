@@ -77,3 +77,49 @@ export interface Lideres {
   min_snaps: number
   jugadores: Rusher[]
 }
+
+// --- Pizarra de jugadas ---
+export interface JugadaResumen {
+  gameId: number
+  playId: number
+  semana: number
+  ofensiva: string
+  defensiva: string
+  lado: 'ofensiva' | 'defensa' // lado del equipo seleccionado en esa jugada
+  rival: string
+  quarter: number
+  down: number
+  yardsToGo: number
+  reloj: string
+  resultado: string
+  yds: number | null
+  descripcion: string
+}
+
+export interface JugadorPizarra {
+  id: number
+  dorsal: number | null
+  equipo: string
+  bando: 'ofensiva' | 'defensa'
+  pos: string | null
+  rol: string | null // rol PFF: Pass, Pass Block, Pass Route, Pass Rush, Coverage
+  nombre: string | null
+  impacto: 'sack' | 'hit' | 'hurry' | null
+}
+
+export interface JugadaPizarra {
+  gameId: number
+  playId: number
+  ofensiva: string
+  defensiva: string
+  down: number
+  yardsToGo: number
+  descripcion: string
+  fps: number
+  snap: number
+  linea_golpeo: number | null
+  jugadores: JugadorPizarra[]
+  frames: number[][][] // [frame][jugador] = [x, y]
+  balon: number[][] | null
+  eventos: { frame: number; evento: string }[]
+}

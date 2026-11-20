@@ -21,7 +21,7 @@ def cargar_env():
 
 cargar_env()
 
-from . import datos, lineas, reportes  # noqa: E402  (después de cargar .env, antes de usar boto3)
+from . import datos, lineas, pizarra, reportes  # noqa: E402  (después de cargar .env, antes de usar boto3)
 
 log = logging.getLogger("uvicorn.error")
 
@@ -88,6 +88,19 @@ def asistente(entrada: Pregunta) -> dict:
         # Solo el tipo de error: nunca se registran credenciales ni mensajes completos
         log.error("Asistente IA no disponible: %s", type(e).__name__)
         raise HTTPException(status_code=503, detail="El asistente de IA no está disponible en este momento.")
+
+
+@app.get("/api/jugadas/{equipo}")
+def jugadas_equipo(equipo: str) -> list[dict]:
+    return pizarra.lista(_validar(equipo))
+
+
+@app.get("/api/jugada/{game_id}/{play_id}")
+def jugada(game_id: int, play_id: int) -> dict:
+    datos_jugada = pizarra.jugada(game_id, play_id)
+    if datos_jugada is None:
+        raise HTTPException(status_code=404, detail="Jugada sin tracking disponible")
+    return datos_jugada
 
 
 # El build del dashboard se sirve en la misma URL y puerto (debe ir al final)

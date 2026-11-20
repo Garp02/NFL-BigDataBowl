@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useApi } from '../api'
 import { Confiabilidad, Estado, Kpi, Tarjeta } from '../components/ui'
+import { useTema } from '../tema'
+import { textoSobre } from '../teamColors'
 import type { Fila, Reporte } from '../types'
 
 type Lado = 'ofensiva' | 'defensa'
@@ -23,6 +25,7 @@ const CLAVE_LIGA: Partial<Record<keyof Fila, keyof Fila>> = { yds_jugada: 'liga_
 const f = (x: number | null | undefined, d = 1) => (x === null || x === undefined ? '—' : x.toFixed(d))
 
 function Desglose({ filas, equipo }: { filas: Fila[]; equipo: string }) {
+  const { acento } = useTema()
   const [metrica, setMetrica] = useState<keyof Fila>('yds_jugada')
   const claveLiga = CLAVE_LIGA[metrica]
   const datos = filas.map((x) => ({
@@ -40,7 +43,8 @@ function Desglose({ filas, equipo }: { filas: Fila[]; equipo: string }) {
           <button
             key={m.clave}
             onClick={() => setMetrica(m.clave)}
-            className={`rounded px-2 py-1 text-xs ${metrica === m.clave ? 'bg-green-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            className={`rounded px-2 py-1 text-xs ${metrica === m.clave ? '' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            style={metrica === m.clave ? { background: acento, color: textoSobre(acento) } : undefined}
           >
             {m.nombre}
           </button>
@@ -55,8 +59,8 @@ function Desglose({ filas, equipo }: { filas: Fila[]; equipo: string }) {
             <YAxis />
             <Tooltip />
             <Legend verticalAlign="top" />
-            <Bar dataKey="valor" name={equipo} fill="#2F7D4F">
-              {datos.map((d, i) => <Cell key={i} fill="#2F7D4F" fillOpacity={d.bajo ? 0.3 : 1} />)}
+            <Bar dataKey="valor" name={equipo} fill={acento}>
+              {datos.map((d, i) => <Cell key={i} fill={acento} fillOpacity={d.bajo ? 0.3 : 1} />)}
             </Bar>
             {hayLiga && <Bar dataKey="liga" name="Liga" fill="#9CA3AF" />}
           </BarChart>

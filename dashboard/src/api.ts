@@ -1,10 +1,24 @@
 import { useEffect, useState } from 'react'
 
-// Ruta relativa SIN diagonal inicial: la app se publica en una subruta
-export async function getJson<T>(ruta: string): Promise<T> {
-  const r = await fetch(`api/${ruta}`)
-  if (!r.ok) throw new Error(`Error ${r.status} al pedir ${ruta}`)
-  return r.json() as Promise<T>
+const pausa = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+// Ruta relativa SIN diagonal inicial: la app se publica en una subruta.
+// Reintenta ante fallos de red o 5xx (p. ej. el backend reiniciándose con --reload); un 4xx no se reintenta.
+export async function getJson<T>(ruta: string, intentos = 5): Promise<T> {
+  for (let n = 1; ; n++) {
+    let fallo: Error
+    let reintentable = true
+    try {
+      const r = await fetch(`api/${ruta}`)
+      if (r.ok) return (await r.json()) as T
+      fallo = new Error(`Error ${r.status} al pedir ${ruta}`)
+      reintentable = r.status >= 500
+    } catch (e) {
+      fallo = e instanceof Error ? e : new Error(String(e))
+    }
+    if (!reintentable || n >= intentos) throw fallo
+    await pausa(700 * n)
+  }
 }
 
 export async function postJson<T>(ruta: string, cuerpo: unknown): Promise<T> {
@@ -26,7 +40,10 @@ export function useApi<T>(ruta: string | null) {
   const [cargando, setCargando] = useState(false)
 
   useEffect(() => {
-    if (!ruta) return
+    if (!ruta) {
+      setCargando(false)
+      return
+    }
     let vigente = true
     setCargando(true)
     setError(null)

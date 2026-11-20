@@ -1,6 +1,7 @@
 import { Bar, BarChart, CartesianGrid, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useApi } from '../api'
 import { Confiabilidad, Estado, Tarjeta } from '../components/ui'
+import { useTema } from '../tema'
 import type { Lideres, Lineas } from '../types'
 
 function Nota({ k, liga }: { k: number; liga: number }) {
@@ -13,6 +14,7 @@ function Nota({ k, liga }: { k: number; liga: number }) {
 }
 
 export default function VistaLineas({ equipo }: { equipo: string }) {
+  const { acento, alerta } = useTema()
   const { datos, error, cargando } = useApi<Lineas>(`lineas/${equipo}`)
   const lid = useApi<Lideres>('lineas/lideres')
 
@@ -41,7 +43,7 @@ export default function VistaLineas({ equipo }: { equipo: string }) {
               <ReferenceLine y={prot.liga_presion_pct} stroke="#6B7280" strokeDasharray="4 4" label={{ value: 'liga', fontSize: 11 }} />
               <Bar dataKey="presion_suav_pct" name="Presión permitida suavizada %">
                 {prot.jugadores.map((j) => (
-                  <Cell key={j.nfl_id} fill={j.eslabon_debil ? '#B91C1C' : '#2F7D4F'} fillOpacity={j.confianza === 'baja' ? 0.3 : 1} />
+                  <Cell key={j.nfl_id} fill={j.eslabon_debil ? alerta : acento} fillOpacity={j.confianza === 'baja' ? 0.3 : 1} />
                 ))}
               </Bar>
             </BarChart>
